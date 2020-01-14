@@ -14,7 +14,7 @@ namespace NitroxServer.ConsoleCommands
         public override void RunCommand(string[] args, Optional<Player> player)
         {
             Info("Printing IP...");
-            IpLogger.PrintServerIps();
+            IpLogger.PrintServerIps(true);
             Info("IPs printed. If nothing got displayed, wait a few seconds. If it still doesn't seem to work (or thrown an exception), figure IPs yourself. It's not that hard. Even the lowliest of cogs can do it!"); //I have no idea, what/who the heck is "the lowliest of cogs", but I've seen this easteregg couple times in this mod.
         }
 
