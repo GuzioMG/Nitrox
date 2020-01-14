@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -47,27 +47,27 @@ namespace NitroxServer
             }
         }
 
-        private static void PrintIfHamachi(NetworkInterface @interface)
+        private static void PrintIfHamachi(NetworkInterface netInterface)
         {
-            if (@interface.Name != "Hamachi")
+            if (netInterface.Name != "Hamachi")
             {
                 return;
             }
 
-            var ips = @interface.GetIPProperties().UnicastAddresses
+            IEnumerable<string> ips = netInterface.GetIPProperties().UnicastAddresses
                 .Select(address => address.Address.ToString())
                 .Where(address => !address.ToString().Contains("fe80::"));
             Log.Info("If using Hamachi, use this IP: " + string.Join(" or ", ips));
         }
 
-        private static void PrintIfLan(NetworkInterface @interface)
+        private static void PrintIfLan(NetworkInterface netInterface)
         {
-            if (@interface.GetIPProperties().GatewayAddresses.Count == 0)
+            if (netInterface.GetIPProperties().GatewayAddresses.Count == 0)
             {
                 return;
             }
 
-            foreach (UnicastIPAddressInformation eachIp in @interface.GetIPProperties().UnicastAddresses)
+            foreach (UnicastIPAddressInformation eachIp in netInterface.GetIPProperties().UnicastAddresses)
             {
                 string[] splitIpParts = eachIp.Address.ToString().Split('.');
                 int secondPart = 0;
