@@ -12,7 +12,7 @@ namespace NitroxServer.ConsoleCommands
         private readonly PlayerData playerData;
         private readonly PlayerManager playerManager;
 
-        public OpCommand(PlayerData playerData, PlayerManager playerManager) : base("op", Perms.ADMIN, "<name>", "Set an user as admin")
+        public OpCommand(PlayerData playerData, PlayerManager playerManager) : base("op", Perms.ADMIN, "<name>", "Sets an user as admin")
         {
             this.playerData = playerData;
             this.playerManager = playerManager;

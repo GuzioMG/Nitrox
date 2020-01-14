@@ -13,7 +13,7 @@ namespace NitroxServer.ConsoleCommands
         private readonly PlayerManager playerManager;
         private readonly ServerConfig serverConfig;
 
-        public ChangeServerPasswordCommand(PlayerManager playerManager, ServerConfig serverConfig) : base("changeserverpassword", Perms.ADMIN, "[<password>]", "Change the server password. Clear password without argument")
+        public ChangeServerPasswordCommand(PlayerManager playerManager, ServerConfig serverConfig) : base("changeserverpassword", Perms.ADMIN, "[<password>]", "Changes the server password. No arguments to clear the password.")
         {
             this.playerManager = playerManager;
             this.serverConfig = serverConfig;
