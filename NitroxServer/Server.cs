@@ -13,7 +13,7 @@ namespace NitroxServer
         private readonly World world;
         private readonly WorldPersistence worldPersistence;
         public bool IsRunning { get; private set; }
-        private bool IsSaving;
+        public bool IsSaving {get; private set;}
         public static Server Instance { get; private set; }
 
         public Server(WorldPersistence worldPersistence, World world, ServerConfig serverConfig, Communication.NetworkingLayer.NitroxServer server)
