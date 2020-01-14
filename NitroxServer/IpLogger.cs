@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -8,7 +8,17 @@ namespace NitroxServer
 {
     public static class IpLogger
     {
+        public static string FailedToResolveExternalIpMessage = "Could not get your external IP. Go to whatismyipaddress.com (IP data provider for this mod) and figure it out yourself.";
+        public static string FailedToResolveIPsMessage = "Unable to resolve IP Addresses... you are on your own. (You're on Mac / Linux (Under Wine, not Mono), are you?)";
+
+
+        [Obsolete]
         public static void PrintServerIps()
+        {
+            PrintServerIps(false);
+        }
+
+        public static void PrintServerIps(bool errorable)
         {
             try
             {
@@ -23,34 +33,41 @@ namespace NitroxServer
             }
             catch (Exception ex)
             {
-                // This is technically an error but will scare most users into thinking the server is not working
-                // generally this can happen on Mac / Wine due to issues fetching networking interfaces.  Simply
+                if (errorable)
+                {
+                    Log.Warn(FailedToResolveExternalIpMessage);  // Printing it only because there is a possible solution to an average user. Totally useless otherwise.
+                    Log.Error(FailedToResolveIPsMessage + "!! >Error details: ", ex);
+                    return;
+                }
+                // This is technically an error, but will scare most users into thinking the server is not working.
+                // Generally, this can happen on Mac / Wine due to issues fetching networking interfaces.  Simply
                 // ignore as this is not a big deal.  They can look these up themselves.
-                Log.Info("Unable to resolve IP Addresses... you are on your own.");
+                Log.Info(FailedToResolveIPsMessage);  //Look up :-)
+                Log.Info(FailedToResolveExternalIpMessage);
             }
         }
 
-        private static void PrintIfHamachi(NetworkInterface _interface)
+        private static void PrintIfHamachi(NetworkInterface netInterface)
         {
-            if (_interface.Name != "Hamachi")
+            if (netInterface.Name != "Hamachi")
             {
                 return;
             }
 
-            var ips = _interface.GetIPProperties().UnicastAddresses
+            IEnumerable<string> ips = netInterface.GetIPProperties().UnicastAddresses
                 .Select(address => address.Address.ToString())
                 .Where(address => !address.ToString().Contains("fe80::"));
             Log.Info("If using Hamachi, use this IP: " + string.Join(" or ", ips));
         }
 
-        private static void PrintIfLan(NetworkInterface _interface)
+        private static void PrintIfLan(NetworkInterface netInterface)
         {
-            if (_interface.GetIPProperties().GatewayAddresses.Count == 0)
+            if (netInterface.GetIPProperties().GatewayAddresses.Count == 0)
             {
                 return;
             }
 
-            foreach (UnicastIPAddressInformation eachIp in _interface.GetIPProperties().UnicastAddresses)
+            foreach (UnicastIPAddressInformation eachIp in netInterface.GetIPProperties().UnicastAddresses)
             {
                 string[] splitIpParts = eachIp.Address.ToString().Split('.');
                 int secondPart = 0;
@@ -97,8 +114,8 @@ namespace NitroxServer
             }
             else
             {
-                Log.Warn("Could not get your external IP. You are on your own...");
-            }            
+                Log.Warn(FailedToResolveExternalIpMessage);
+            }
         }
     }
 }
