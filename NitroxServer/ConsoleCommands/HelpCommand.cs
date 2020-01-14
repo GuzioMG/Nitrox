@@ -13,7 +13,7 @@ namespace NitroxServer.ConsoleCommands
     {
         private readonly PlayerData playerData;
         
-        public HelpCommand(PlayerData playerData) : base("help", Perms.PLAYER, "", "Shows help about supported commands")
+        public HelpCommand(PlayerData playerData) : base("help", Perms.PLAYER, "", "Shows help about supported commands.")
         {
             this.playerData = playerData;
         }
