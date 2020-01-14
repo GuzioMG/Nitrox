@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -9,7 +8,17 @@ namespace NitroxServer
 {
     public static class IpLogger
     {
+        public static string FailedToResolveExternalIpMessage = "Could not get your external IP. Go to whatismyipaddress.com (IP data provider for this mod) and figure it out yourself.";
+        public static string FailedToResolveIPsMessage = "Unable to resolve IP Addresses... you are on your own. (You're on Mac / Linux (Under Wine, not Mono), are you?)";
+
+
+        [Obsolete]
         public static void PrintServerIps()
+        {
+            PrintServerIps(false);
+        }
+
+        public static void PrintServerIps(bool errorable)
         {
             try
             {
@@ -22,12 +31,19 @@ namespace NitroxServer
 
                 PrintIfExternal();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // This is technically an error but will scare most users into thinking the server is not working
-                // generally this can happen on Mac / Wine due to issues fetching networking interfaces.  Simply
+                if (errorable)
+                {
+                    Log.Warn(FailedToResolveExternalIpMessage);  // Printing it only because there is a possible solution to an average user. Totally useless otherwise.
+                    Log.Error(FailedToResolveIPsMessage + "!! >Error details: ", ex);
+                    return;
+                }
+                // This is technically an error, but will scare most users into thinking the server is not working.
+                // Generally, this can happen on Mac / Wine due to issues fetching networking interfaces.  Simply
                 // ignore as this is not a big deal.  They can look these up themselves.
-                Log.Info("Unable to resolve IP Addresses... you are on your own.");
+                Log.Info(FailedToResolveIPsMessage);  //Look up :-)
+                Log.Info(FailedToResolveExternalIpMessage);
             }
         }
 
@@ -98,8 +114,8 @@ namespace NitroxServer
             }
             else
             {
-                Log.Warn("Could not get your external IP. You are on your own...");
-            }            
+                Log.Warn(FailedToResolveExternalIpMessage);
+            }
         }
     }
 }
