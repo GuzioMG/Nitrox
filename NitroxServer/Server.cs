@@ -1,14 +1,18 @@
 ﻿using System.Timers;
+using System;
 using NitroxModel.Logger;
 using NitroxServer.Serialization.World;
 using NitroxServer.ConfigParser;
 using System.Configuration;
+using NitroxServer.GameLogic;
 
 namespace NitroxServer
 {
     public class Server
     {
         private readonly Timer saveTimer;
+        public bool Autosaving;
+        public bool DisableAutosaveOnNoPlayers = true;
         private Communication.NetworkingLayer.NitroxServer server;
         private readonly World world;
         private readonly WorldPersistence worldPersistence;
@@ -27,7 +31,6 @@ namespace NitroxServer
             this.world = world;
             this.server = server;
             
-            // TODO: Save once after last player leaves then stop saving.
             saveTimer = new Timer();
             saveTimer.Interval = serverConfig.SaveInterval;
             saveTimer.AutoReset = true;
@@ -43,6 +46,19 @@ namespace NitroxServer
             IsSaving = true;
             worldPersistence.Save(world);
             IsSaving = false;
+            if (PlayerManager.Instance != null)
+            {
+                if(Autosaving && PlayerManager.Instance.GetPlayers().Count == 0 && DisableAutosaveOnNoPlayers)
+                {
+                    Log.Warn("No players online. Autosave disabled! It won't be enabled automatically!!!"); // TODO: Make it auto-enable, when a player joins.
+                    DisablePeriodicSaving();
+                    Console.Beep(900, 5000); //5-second beep to warn an owner (if he/she uses computer at the moment) //TODO: Make it possibe to toggle this off.
+                }
+                else if (PlayerManager.Instance.GetPlayers().Count == 0 && !Autosaving)
+                {
+                    Log.Info("Autosave still disabled due to lack of players! It won't be enabled automatically!!!");
+                }
+            }
         }
 
         public void Start()
@@ -66,12 +82,16 @@ namespace NitroxServer
 
         private void EnablePeriodicSaving()
         {
+            Log.Info("Enabling periodic saving...");
+            Autosaving = true;
             saveTimer.Start();
         }
 
         private void DisablePeriodicSaving()
         {
             saveTimer.Stop();
+            Autosaving = false;
+            Log.Info("Periodic saving disabled.");
         }
     }
 }

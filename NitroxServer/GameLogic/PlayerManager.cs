@@ -21,11 +21,13 @@ namespace NitroxServer.GameLogic
         private readonly ServerConfig serverConfig;
         private readonly Dictionary<string, PlayerContext> reservations = new Dictionary<string, PlayerContext>();
         private readonly HashSet<string> reservedPlayerNames = new HashSet<string>();
+        public static PlayerManager Instance = null;
 
         public PlayerManager(PlayerData playerData, ServerConfig serverConfig)
         {
             this.playerData = playerData;
             this.serverConfig = serverConfig;
+            Instance = this;
         }
 
         public List<Player> GetPlayers()
