@@ -4,7 +4,6 @@ using NitroxModel.DataStructures.GameLogic;
 using NitroxModel.DataStructures.Util;
 using NitroxModel.Logger;
 using NitroxServer.ConsoleCommands.Abstract;
-using NitroxServer.ConsoleCommands.Processor;
 using NitroxServer.GameLogic.Players;
 
 namespace NitroxServer.ConsoleCommands
@@ -13,7 +12,7 @@ namespace NitroxServer.ConsoleCommands
     {
         private readonly PlayerData playerData;
         
-        public HelpCommand(PlayerData playerData) : base("help", Perms.PLAYER, "", "Display help about supported commands")
+        public HelpCommand(PlayerData playerData) : base("help", Perms.PLAYER, "", "Shows help about supported commands. You just typed it, btw., so what don't you get?", new string[] {"cmds", "commands"})
         {
             this.playerData = playerData;
         }
@@ -23,7 +22,7 @@ namespace NitroxServer.ConsoleCommands
             if (player.IsPresent())
             {
                 List<string> cmdsText = GetHelpText(playerData.GetPermissions(player.Get().Name));
-                cmdsText.ForEach(cmdText => SendServerMessageIfPlayerIsPresent(player, cmdText));
+                cmdsText.ForEach(cmdText => ChatManager.SendServerMessageIfPlayerIsPresent(player, cmdText));
             }
             else
             {

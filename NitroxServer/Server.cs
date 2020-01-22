@@ -13,14 +13,14 @@ namespace NitroxServer
         private readonly World world;
         private readonly WorldPersistence worldPersistence;
         public bool IsRunning { get; private set; }
-        private bool IsSaving;
+        public bool IsSaving {get; private set;}
         public static Server Instance { get; private set; }
 
         public Server(WorldPersistence worldPersistence, World world, ServerConfig serverConfig, Communication.NetworkingLayer.NitroxServer server)
         {
             if (ConfigurationManager.AppSettings.Count == 0)
             {
-                Log.Warn("Nitrox Server Cant Read Config File.");
+                Log.Warn("Nitrox Server couldn't read the config file!");
             }
             Instance = this;
             this.worldPersistence = worldPersistence;
@@ -50,18 +50,22 @@ namespace NitroxServer
             IsRunning = true;
             IpLogger.PrintServerIps();
             server.Start();
-            Log.Info("Nitrox Server Started");
+            Log.Info("Nitrox Server Started.");
             EnablePeriodicSaving();
         }
 
         public void Stop()
         {
+            IsRunning = false;
+        }
+
+        public void Exit()
+        {
             Log.Info("Nitrox Server Stopping...");
             DisablePeriodicSaving();
             Save();
             server.Stop();
-            Log.Info("Nitrox Server Stopped");
-            IsRunning = false;
+            Log.Info("Nitrox Server Stopped.");
         }
 
         private void EnablePeriodicSaving()

@@ -11,7 +11,7 @@ namespace NitroxServer.ConsoleCommands
     {
         private readonly PlayerManager playerManager;
 
-        public ListCommand(PlayerManager playerManager) : base("list", Perms.PLAYER)
+        public ListCommand(PlayerManager playerManager) : base("list", Perms.PLAYER, "", "Gives a list of online players.", new string[] {"online", "players", "whois" })
         {
             this.playerManager = playerManager;
         }
@@ -28,7 +28,7 @@ namespace NitroxServer.ConsoleCommands
             }
 
             Log.Info(playerList);
-            SendServerMessageIfPlayerIsPresent(player, playerList);
+            ChatManager.SendServerMessageIfPlayerIsPresent(player, playerList);
         }
 
         public override bool VerifyArgs(string[] args)

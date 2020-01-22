@@ -12,7 +12,7 @@ namespace NitroxServer.ConsoleCommands
     {
         private readonly PlayerManager playerManager;
 
-        public WhisperCommand(PlayerManager playerManager) : base("w", Perms.PLAYER, "<PlayerName> <msg>")
+        public WhisperCommand(PlayerManager playerManager) : base("whisper", Perms.PLAYER, "<PlayerName> <msg>", "Sends a private message.", new string[] {"w", "msg", "m"})
         {
             this.playerManager = playerManager;
         }
@@ -40,7 +40,7 @@ namespace NitroxServer.ConsoleCommands
             {
                 string errorMessage = "Unable to whisper " + args[0] + " - player not found.";
 
-                SendServerMessageIfPlayerIsPresent(player, errorMessage);
+                ChatManager.SendServerMessageIfPlayerIsPresent(player, errorMessage);
                 Log.Info(errorMessage);
             }
         }

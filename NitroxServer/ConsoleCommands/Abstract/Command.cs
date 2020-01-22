@@ -1,7 +1,6 @@
 ﻿using NitroxModel.DataStructures.Util;
 using NitroxModel.Helper;
 using NitroxModel.DataStructures.GameLogic;
-using NitroxModel.Packets;
 
 namespace NitroxServer.ConsoleCommands.Abstract
 {
@@ -38,7 +37,7 @@ namespace NitroxServer.ConsoleCommands.Abstract
             Validate.NotNull(argsDescription);
 
             Name = name;
-            Description = string.IsNullOrEmpty(description) ? "No description" : description;
+            Description = string.IsNullOrEmpty(description) ? "(no description)" : description;
             ArgsDescription = argsDescription;
             RequiredPermLevel = requiredPermLevel;
             Alias = alias ?? new string[0];
@@ -63,14 +62,6 @@ namespace NitroxServer.ConsoleCommands.Abstract
             cmd += "  " + ArgsDescription;
 
             return $"{cmd, -40}  -  {Description}";
-        }
-
-        public void SendServerMessageIfPlayerIsPresent(Optional<Player> player, string message)
-        {
-            if (player.IsPresent())
-            {
-                player.Get().SendPacket(new ChatMessage(ChatMessage.SERVER_ID, message));
-            }
         }
     }
 }

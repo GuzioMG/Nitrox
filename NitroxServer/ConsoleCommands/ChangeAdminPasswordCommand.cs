@@ -10,12 +10,10 @@ namespace NitroxServer.ConsoleCommands
 {
     internal class ChangeAdminPasswordCommand : Command
     {
-        private readonly PlayerManager playerManager;
         private readonly ServerConfig serverConfig;
 
-        public ChangeAdminPasswordCommand(PlayerManager playerManager, ServerConfig serverConfig) : base("changeadminpassword", Perms.ADMIN, "<password>", "Change the admin password")
+        public ChangeAdminPasswordCommand(PlayerManager playerManager, ServerConfig serverConfig) : base("changeadminpassword", Perms.ADMIN, "<password>", "Changes the admin password.")
         {
-            this.playerManager = playerManager;
             this.serverConfig = serverConfig;
         }
 
@@ -28,7 +26,7 @@ namespace NitroxServer.ConsoleCommands
             }
             catch (Exception ex)
             {
-                Log.Error("Error attempting to change admin password: " + args[0], ex);
+                Log.Error("Error attempting to change an admin password to "+args[0]+": ", ex);
             }
         }
 
@@ -40,7 +38,7 @@ namespace NitroxServer.ConsoleCommands
         private void ChangeAdminPassword(string password, string name)
         {
             serverConfig.ChangeAdminPassword(password);
-            Log.Info($"Admin password changed to \"{password}\" by {name}");
+            Log.Warn($"Admin password changed to \"{password}\" by {name}");
         }
     }
 }

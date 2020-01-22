@@ -11,7 +11,7 @@ namespace NitroxServer.ConsoleCommands
     {
         private readonly PlayerManager playerManager;
 
-        public SayCommand(PlayerManager playerManager) : base("say", Perms.ADMIN, "<message>", "say Even the lowliest of cogs needs to say something SO SAY SOMETHING!", new[] {"broadcast"})
+        public SayCommand(PlayerManager playerManager) : base("say", Perms.ADMIN, "<message>", "Even the lowliest of cogs need to say something. SO SAY SOMETHING!", new[] {"broadcast", "send", "s"})
         {
             this.playerManager = playerManager;
         }

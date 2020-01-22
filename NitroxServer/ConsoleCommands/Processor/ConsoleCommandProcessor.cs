@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NitroxModel.Logger;
 using NitroxServer.ConsoleCommands.Abstract;
 using NitroxServer.Exceptions;
-using NitroxServer.GameLogic;
 using NitroxModel.Packets;
 using NitroxModel.DataStructures.GameLogic;
 using NitroxModel.DataStructures.Util;
@@ -14,11 +12,9 @@ namespace NitroxServer.ConsoleCommands.Processor
     public class ConsoleCommandProcessor
     {
         private readonly Dictionary<string, Command> commands = new Dictionary<string, Command>();
-        private readonly PlayerManager playerManager;
 
-        public ConsoleCommandProcessor(IEnumerable<Command> cmds, PlayerManager playerManager)
+        public ConsoleCommandProcessor(IEnumerable<Command> cmds)
         {
-            this.playerManager = playerManager;
             foreach (Command cmd in cmds)
             {
                 if (commands.ContainsKey(cmd.Name))
@@ -72,7 +68,7 @@ namespace NitroxServer.ConsoleCommands.Processor
             }
             else
             {
-                cmd.SendServerMessageIfPlayerIsPresent(player, "You do not have the required permissions for this command!");
+                ChatManager.SendServerMessageIfPlayerIsPresent(player, "You do not have the required permissions for this command!");
             }
         }
 
@@ -86,9 +82,11 @@ namespace NitroxServer.ConsoleCommands.Processor
             }
             else
             {
-                string errorMessage = string.Format("Received Command Arguments for {0}: {1}", command.Name, command.ArgsDescription);
-                Log.Info(errorMessage);
-                command.SendServerMessageIfPlayerIsPresent(player, errorMessage);
+                string errorMessage = string.Format("Received Wrong Command Arguments for CMD {0}: {1}. "
+                    + (string.IsNullOrWhiteSpace(command.ArgsDescription) ? "This command should be used witout arguments." : "Expected {2}."),
+                    command.Name, string.Join(" ", args), command.ArgsDescription);
+                Log.Error((player.IsPresent() ? ("<"+player.Get().Name+":> ") : "")+errorMessage);
+                ChatManager.SendServerMessageIfPlayerIsPresent(player, errorMessage);
             }
         }
     }

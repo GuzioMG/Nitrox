@@ -16,6 +16,8 @@ namespace NitroxServer_Subnautica
     {
         private static void Main(string[] args)
         {
+            Log.Info("Warming (*Booting) up Aurora drive core (*the server)...");
+
             NitroxModel.Helper.Map.Main = new SubnauticaMap();
 
             NitroxServiceLocator.InitializeDependencyContainer(new SubnauticaServerAutoFacRegistrar());
@@ -44,6 +46,8 @@ namespace NitroxServer_Subnautica
             {
                 cmdProcessor.ProcessCommand(Console.ReadLine(), Optional<NitroxServer.Player>.Empty(), Perms.CONSOLE);
             }
+
+            StopAndExitServer();
         }
 
         /**
@@ -81,7 +85,7 @@ namespace NitroxServer_Subnautica
             // better catch using WinAPI. This will handled process kill
             if (platid == PlatformID.Win32NT)
             {
-                SetConsoleCtrlHandler(_ConsoleCtrlCheckDelegate, true);
+                SetConsoleCtrlHandler(consoleCtrlCheckDelegate, true);
             }
         }
 
@@ -90,7 +94,7 @@ namespace NitroxServer_Subnautica
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
 
-        private static ConsoleEventDelegate _ConsoleCtrlCheckDelegate = ConsoleEventCallback;
+        private static ConsoleEventDelegate consoleCtrlCheckDelegate = ConsoleEventCallback;
 
         private static bool ConsoleEventCallback(int eventType)
         {
@@ -108,8 +112,12 @@ namespace NitroxServer_Subnautica
         private static void StopAndExitServer()
         {
             Log.Info("Exiting ...");
-            Server.Instance.Stop();
-            Environment.Exit(0);
+            Server.Instance.Exit();
+            int exitCode = 0; //TODO: Make this thing useful for anything.
+            Log.Info("Exit with code "+exitCode+".");
+            Console.Write("\n\nPRESS ANY KEY TO CONTINUE...");
+            Console.ReadKey(true);
+            Environment.Exit(exitCode);
         }
     }
 }
