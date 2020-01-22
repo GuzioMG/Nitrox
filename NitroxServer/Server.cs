@@ -56,12 +56,16 @@ namespace NitroxServer
 
         public void Stop()
         {
+            IsRunning = false;
+        }
+
+        public void Exit()
+        {
             Log.Info("Nitrox Server Stopping...");
             DisablePeriodicSaving();
             Save();
             server.Stop();
             Log.Info("Nitrox Server Stopped.");
-            IsRunning = false;
         }
 
         private void EnablePeriodicSaving()

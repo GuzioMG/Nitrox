@@ -1,7 +1,6 @@
 ﻿using NitroxServer.ConsoleCommands.Abstract;
 using NitroxServer.GameLogic.Players;
 using NitroxModel.DataStructures.GameLogic;
-using NitroxServer.GameLogic;
 using NitroxModel.DataStructures.Util;
 using NitroxModel.Logger;
 
@@ -10,12 +9,10 @@ namespace NitroxServer.ConsoleCommands
     internal class DeopCommand : Command
     {
         private readonly PlayerData playerData;
-        private readonly PlayerManager playerManager;
 
-        public DeopCommand(PlayerData playerData, PlayerManager playerManager) : base("deop", Perms.ADMIN, "<name>")
+        public DeopCommand(PlayerData playerData) : base("deop", Perms.CONSOLE, "<name>")
         {
             this.playerData = playerData;
-            this.playerManager = playerManager;
         }
 
         public override void RunCommand(string[] args, Optional<Player> player)
@@ -33,7 +30,6 @@ namespace NitroxServer.ConsoleCommands
             }
 
             Log.Info(message);
-            SendServerMessageIfPlayerIsPresent(player, message);
         }
 
         public override bool VerifyArgs(string[] args)

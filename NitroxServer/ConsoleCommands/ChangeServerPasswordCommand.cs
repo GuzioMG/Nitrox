@@ -2,7 +2,6 @@
 using NitroxModel.DataStructures.Util;
 using NitroxModel.Logger;
 using NitroxServer.ConsoleCommands.Abstract;
-using NitroxServer.GameLogic;
 using NitroxModel.DataStructures.GameLogic;
 using NitroxServer.ConfigParser;
 
@@ -10,12 +9,10 @@ namespace NitroxServer.ConsoleCommands
 {
     internal class ChangeServerPasswordCommand : Command
     {
-        private readonly PlayerManager playerManager;
         private readonly ServerConfig serverConfig;
 
-        public ChangeServerPasswordCommand(PlayerManager playerManager, ServerConfig serverConfig) : base("changeserverpassword", Perms.ADMIN, "[<password>]", "Changes the server password. No arguments to clear the password.")
+        public ChangeServerPasswordCommand(ServerConfig serverConfig) : base("changeserverpassword", Perms.ADMIN, "[<password>]", "Changes the server password. No arguments to clear the password.")
         {
-            this.playerManager = playerManager;
             this.serverConfig = serverConfig;
         }
 
@@ -28,7 +25,7 @@ namespace NitroxServer.ConsoleCommands
             }
             catch (Exception ex)
             {
-                Log.Error("Error attempting to change server password: " + args[0], ex);
+                Log.Error("Error attempting to " + (args.Length == 0 ? "change " : "remove ") + "the server password" + (args.Length == 0 ? "" : (" to "+args[0])) + ": ", ex);
             }
         }
 
@@ -40,7 +37,7 @@ namespace NitroxServer.ConsoleCommands
         private void ChangeServerPassword(string password, string name)
         {
             serverConfig.ChangeServerPassword(password);
-            Log.Info($"Server password changed to \"{password}\" by {name}");
+            Log.Warn($"Server password changed to \"{password}\" by {name}");
         }
     }
 }

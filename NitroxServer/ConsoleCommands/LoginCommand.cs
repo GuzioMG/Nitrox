@@ -1,8 +1,6 @@
-﻿using System.Text.RegularExpressions;
-using NitroxServer.ConsoleCommands.Abstract;
+﻿using NitroxServer.ConsoleCommands.Abstract;
 using NitroxServer.GameLogic.Players;
 using NitroxModel.DataStructures.GameLogic;
-using NitroxServer.GameLogic;
 using NitroxModel.DataStructures.Util;
 using NitroxModel.Logger;
 using NitroxServer.ConfigParser;
@@ -12,13 +10,11 @@ namespace NitroxServer.ConsoleCommands
     internal class LoginCommand : Command
     {
         private readonly PlayerData playerData;
-        private readonly PlayerManager playerManager;
         private readonly ServerConfig serverConfig;
 
-        public LoginCommand(PlayerData playerData, PlayerManager playerManager, ServerConfig serverConfig) : base("login", Perms.PLAYER, "<password>")
+        public LoginCommand(PlayerData playerData, ServerConfig serverConfig) : base("login", Perms.PLAYER, "<password>", "Gives a player admin permissions, even if he/she doesn't have permissions. Requies acces key (admin <password>).", new string[] {"force", "admin"})
         {
             this.playerData = playerData;
-            this.playerManager = playerManager;
             this.serverConfig = serverConfig;
         }
 
@@ -27,24 +23,31 @@ namespace NitroxServer.ConsoleCommands
             string pass = args[0];
             string message;
             string playerName = player.Get().Name;
+            bool correctPass = true;
+
+            Log.Warn("Player " + playerName + " forced admin permissions on itself. Given password...");
 
             if (pass == serverConfig.AdminPassword)
             {
                 if (playerData.UpdatePlayerPermissions(playerName, Perms.ADMIN))
                 {
                     message = "Updated permissions to admin for " + playerName;
+                    Log.Warn("...is correct. Make sure you trust this person, as it can now do almost anything.");
                 }
                 else
                 {
                     message = "Could not update permissions " + playerName;
+                    Log.Info("...is correct.");
                 }
             }
             else
             {
-                message = "Incorrect Password";
+                message = "Incorrect Password.";
+                Log.Warn("...is incorrect. Beware, this might be a brute-force attack. ...Or just a typo :-)");
+                correctPass = false;
             }
-            Log.Info(message);
-            SendServerMessageIfPlayerIsPresent(player, message);
+            Log.Info((!correctPass ? ("Could not update permissions " + playerName + ". "):"") + message);
+            ChatManager.SendServerMessageIfPlayerIsPresent(player, message);
         }
 
         public override bool VerifyArgs(string[] args)

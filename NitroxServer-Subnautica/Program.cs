@@ -46,6 +46,8 @@ namespace NitroxServer_Subnautica
             {
                 cmdProcessor.ProcessCommand(Console.ReadLine(), Optional<NitroxServer.Player>.Empty(), Perms.CONSOLE);
             }
+
+            StopAndExitServer();
         }
 
         /**
@@ -110,7 +112,7 @@ namespace NitroxServer_Subnautica
         private static void StopAndExitServer()
         {
             Log.Info("Exiting ...");
-            Server.Instance.Stop();
+            Server.Instance.Exit();
             int exitCode = 0; //TODO: Make this thing useful for anything.
             Log.Info("Exit with code "+exitCode+".");
             Console.Write("\n\nPRESS ANY KEY TO CONTINUE...");
